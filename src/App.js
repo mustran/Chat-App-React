@@ -60,9 +60,10 @@ class App extends Component {
             .then(room => {
                 this.setState({
                     roomId: room.id
-                })
+                });
                 this.getRooms();
-            }).catch(err => console.log(err))
+            })
+            .catch(err => console.log(err));
     };
 
     sendMessage = text => {
@@ -98,6 +99,7 @@ class App extends Component {
                         value={this.state.message}
                     />
                     <RoomList
+                        roomId={this.state.roomId}
                         subscribeToRoom={this.subscribeToRoom}
                         rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
                     />
