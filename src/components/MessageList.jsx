@@ -5,16 +5,15 @@ import Message from "./Message";
 class MessageList extends React.Component {
     componentDidUpdate() {
         const node = ReactDOM.findDOMNode(this);
-        // console.log(node);
-        node.scrollTop = node.scrollHeight;
-        window.scrollTo(0, document.body.scrollHeight);
+        console.log(node);
+        node.scrollTop = node.scrollHeight - node.clientHeight;
     }
     render() {
         if (this.props.disabled) {
-            return <div> JOIN A ROOM !</div>;
+            return <div className="messageList"> JOIN A ROOM !</div>;
         } else {
             return (
-                <div>
+                <div className="messageList">
                     {this.props.messages.map((message, index) => {
                         return (
                             <Message

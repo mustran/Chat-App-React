@@ -4,7 +4,7 @@ import styled from "styled-components";
 export default function RoomList({ subscribeToRoom, rooms, roomId }) {
     const orderedRooms = [...rooms];
     orderedRooms.sort((a, b) => {
-        return a.id - b.id;
+        return new Date(a.createdAt) - new Date(b.createdAt);
     });
     return (
         <div>
@@ -13,7 +13,7 @@ export default function RoomList({ subscribeToRoom, rooms, roomId }) {
                 return (
                     <ActiveLink key={index}>
                         <a className={active} onClick={() => subscribeToRoom(room.id)} href="#">
-                            #{room.name}
+                            # {room.name}
                         </a>
                     </ActiveLink>
                 );
@@ -23,6 +23,14 @@ export default function RoomList({ subscribeToRoom, rooms, roomId }) {
 }
 
 const ActiveLink = styled.li`
+    list-style: none;
+    font-size: 20px;
+    padding: 3px;
+    font-weight: bold;
+    a {
+        color: white;
+        text-decoration: none;
+    }
     .active {
         color: red;
         background-color: blue;

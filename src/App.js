@@ -14,7 +14,8 @@ class App extends Component {
         joinedRooms: [],
         roomId: null,
         newRoomName: "",
-        disable: true
+        disable: true,
+        usersWhoAreTyping: []
     };
 
     componentDidMount() {
@@ -28,9 +29,12 @@ class App extends Component {
 
         chatManager.connect().then(currentUser => {
             this.currentUser = currentUser;
+            console.log(this.currentUser.rooms);
             this.getRooms();
             // console.log("Connected as user ", currentUser);
         });
+
+        console.log("COMPONENT DID MOUNT");
     }
 
     getRooms = () => {
@@ -57,8 +61,14 @@ class App extends Component {
                         this.setState({
                             messages: [...this.state.messages, message]
                         });
+                    },
+                    onUserStartedTyping: user => {
+                        this.setState({
+                            usersWhoAreTyping: [...this.state.usersWhoAreTyping, user.name]
+                        });
                     }
                 }
+
                 // messageLimit: 0
             })
             .then(room => {
@@ -117,25 +127,34 @@ class App extends Component {
 
     render() {
         return (
-            <AppWrapper>
+            <AppWrapper style={{ height: "100%" }}>
                 <div className="container">
-                    <MessageList disabled={this.state.disable} messages={this.state.messages} />
-                    <SendeMessageForm
-                        disabled={this.state.disable}
-                        handleSubmit={this.handleSubmit}
-                        handleChange={this.handleChange}
-                        value={this.state.message}
-                    />
-                    <RoomList
-                        roomId={this.state.roomId}
-                        subscribeToRoom={this.subscribeToRoom}
-                        rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
-                    />
-                    <NewRoomForm
-                        handleChangeRoom={this.handleChangeRoom}
-                        value={this.state.newRoomName}
-                        handleSubmit={this.handleSubmitRoom}
-                    />
+                    {/* <div style={{overflow: "hidden", width: "100%", height: "100%"}}> */}
+                        <MessageList disabled={this.state.disable} messages={this.state.messages} />
+                    {/* </div> */}
+                    <div className="senderForm">
+                        <SendeMessageForm
+                            isTyping={this.isTyping}
+                            disabled={this.state.disable}
+                            handleSubmit={this.handleSubmit}
+                            handleChange={this.handleChange}
+                            value={this.state.message}
+                        />
+                    </div>
+                    <div className="roomList">
+                        <RoomList
+                            roomId={this.state.roomId}
+                            subscribeToRoom={this.subscribeToRoom}
+                            rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
+                        />
+                    </div>
+                    <div className="newRoom">
+                        <NewRoomForm
+                            handleChangeRoom={this.handleChangeRoom}
+                            value={this.state.newRoomName}
+                            handleSubmit={this.handleSubmitRoom}
+                        />
+                    </div>
                 </div>
             </AppWrapper>
         );
@@ -145,7 +164,40 @@ class App extends Component {
 const AppWrapper = styled.div`
     .container {
         display: grid;
-        grid-auto-flow: column;
+        width: 100%;
+        height: 100%;
+        grid-template-areas:
+            "messages  messages messages messages messages pages"
+            "messages  messages messages messages messages pages"
+            "messages  messages messages messages messages pages"
+            "messages  messages messages messages messages pages"
+            "messages  messages messages messages messages pages"
+            "newMessage  newMessage newMessage newMessage newMessage newRoom";
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr 60px;
+    }
+
+    .roomList {
+        grid-area: pages;
+        background-color: #8ca0ff;
+    }
+
+    .messageList {
+        overflow: scroll;
+        height: 100%;
+        grid-area: messages;
+        background-color: #ffa08c;
+        /* border-radius: 5px; */
+    }
+
+    .senderForm {
+        grid-area: newMessage;
+        background-color: #2cffa0;
+        position: relative;
+    }
+    .newRoom {
+        grid-area: newRoom;
+        background-color: #8cffa0;
     }
 `;
 
