@@ -1,11 +1,12 @@
 import React from "react";
 
-export default function SendMessageForm({ handleChange, value, handleSubmit}) {
+export default function SendMessageForm({ disabled, handleChange, value, handleSubmit}) {
 
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 <input
+                disabled={disabled}
                     onChange={handleChange}
                     value={value}
                     type="text"

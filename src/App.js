@@ -5,13 +5,16 @@ import SendeMessageForm from "./components/SendMessageForm";
 import Chatkit from "@pusher/chatkit-client";
 import RoomList from "./components/RoomList";
 import { tokenUrl, instanceLocator } from "./config";
+import NewRoomForm from "./components/NewRoomForm";
 class App extends Component {
     state = {
         messages: [],
         message: "",
         joinableRooms: [],
         joinedRooms: [],
-        roomId: null
+        roomId: null,
+        newRoomName: "",
+        disable: true
     };
 
     componentDidMount() {
@@ -41,7 +44,8 @@ class App extends Component {
 
     subscribeToRoom = id => {
         this.setState({
-            messages: []
+            messages: [],
+            disable: false
         });
         // console.log(id);
         this.currentUser
@@ -88,12 +92,36 @@ class App extends Component {
         // console.log(this.state.message);
     };
 
+    handleSubmitRoom = e => {
+        e.preventDefault();
+        // console.log(this.state.newRoomName);
+        this.createRoom(this.state.newRoomName);
+        this.setState({
+            newRoomName: ""
+        });
+    };
+
+    handleChangeRoom = e => {
+        this.setState({
+            newRoomName: e.target.value
+        });
+    };
+
+    createRoom = name => {
+        this.currentUser
+            .createRoom({
+                name
+            })
+            .then(room => this.subscribeToRoom(room.id));
+    };
+
     render() {
         return (
             <AppWrapper>
                 <div className="container">
-                    <MessageList messages={this.state.messages} />
+                    <MessageList disabled={this.state.disable} messages={this.state.messages} />
                     <SendeMessageForm
+                        disabled={this.state.disable}
                         handleSubmit={this.handleSubmit}
                         handleChange={this.handleChange}
                         value={this.state.message}
@@ -102,6 +130,11 @@ class App extends Component {
                         roomId={this.state.roomId}
                         subscribeToRoom={this.subscribeToRoom}
                         rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
+                    />
+                    <NewRoomForm
+                        handleChangeRoom={this.handleChangeRoom}
+                        value={this.state.newRoomName}
+                        handleSubmit={this.handleSubmitRoom}
                     />
                 </div>
             </AppWrapper>
