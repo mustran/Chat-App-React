@@ -12,7 +12,7 @@ export default function Message({ username, message }) {
 
 
 const MessageWrapper = styled.div`
-    .username{
+    .sender{
         font-size: 0.8rem;
         font-weight: bold;
     }

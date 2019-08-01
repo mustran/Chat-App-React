@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import MessageList from "./components/MessageList";
+import styled from "styled-components";
+import SendeMessageForm from "./components/SendMessageForm";
 import Chatkit from "@pusher/chatkit-client";
 import { tokenUrl, instanceLocator } from "./config";
 class App extends Component {
     state = {
-        messages: []
+        messages: [],
+        message: ""
     };
 
     componentDidMount() {
@@ -17,6 +20,7 @@ class App extends Component {
         });
 
         chatManager.connect().then(currentUser => {
+            this.currentUser = currentUser;
             currentUser.subscribeToRoom({
                 roomId: "31264558",
                 hooks: {
@@ -35,13 +39,50 @@ class App extends Component {
             console.log("Connected as user ", currentUser);
         });
     }
+
+    sendMessage = text => {
+        this.currentUser.sendMessage({
+            text,
+            roomId: "31264558"
+        });
+    };
+
+    handleChange = e => {
+        this.setState({
+            message: e.target.value
+        });
+    };
+
+    handleSubmit = e => {
+        e.preventDefault();
+        this.sendMessage(this.state.message);
+        this.setState({
+          message: ''
+        })
+        console.log(this.state.message);
+    };
+
     render() {
         return (
-            <div className="App">
-                <MessageList messages={this.state.messages}/>
-            </div>
+            <AppWrapper>
+                <div className="container">
+                    <MessageList messages={this.state.messages} />
+                    <SendeMessageForm
+                        handleSubmit={this.handleSubmit}
+                        handleChange={this.handleChange}
+                        value={this.state.message}
+                    />
+                </div>
+            </AppWrapper>
         );
     }
 }
+
+const AppWrapper = styled.div`
+    .container {
+        /* display: grid;
+        grid-auto-flow: column; */
+    }
+`;
 
 export default App;
