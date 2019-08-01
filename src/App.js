@@ -3,11 +3,14 @@ import MessageList from "./components/MessageList";
 import styled from "styled-components";
 import SendeMessageForm from "./components/SendMessageForm";
 import Chatkit from "@pusher/chatkit-client";
+import RoomList from "./components/RoomList";
 import { tokenUrl, instanceLocator } from "./config";
 class App extends Component {
     state = {
         messages: [],
-        message: ""
+        message: "",
+        joinableRooms: [],
+        joinedRooms: []
     };
 
     componentDidMount() {
@@ -21,24 +24,39 @@ class App extends Component {
 
         chatManager.connect().then(currentUser => {
             this.currentUser = currentUser;
-            currentUser.subscribeToRoom({
-                roomId: "31264558",
-                hooks: {
-                    onMessage: message => {
-                        console.log("message.text ", message.text, currentUser.rooms);
-                        this.setState(
-                            {
-                                messages: [...this.state.messages, message]
-                            },
-                            () => console.log(this.state.messages)
-                        );
-                    }
-                }
-                // messageLimit: 0
-            });
-            console.log("Connected as user ", currentUser);
+            this.getRooms();
+            // console.log("Connected as user ", currentUser);
         });
     }
+
+    getRooms = () => {
+        this.currentUser.getJoinableRooms().then(joinableRooms => {
+            this.setState({
+                joinableRooms,
+                joinedRooms: this.currentUser.rooms
+            });
+        });
+    };
+
+    subscribeToRoom = id => {
+      this.setState({
+        messages: []
+      })
+      console.log(id);
+        this.currentUser.subscribeToRoom({
+            roomId: id,
+            hooks: {
+                onMessage: message => {
+                    // console.log("message.text ", message.text, currentUser.rooms);
+                    this.setState({
+                        messages: [...this.state.messages, message]
+                    });
+                }
+            }
+            // messageLimit: 0
+        });
+        // console.log(id)
+    };
 
     sendMessage = text => {
         this.currentUser.sendMessage({
@@ -57,9 +75,9 @@ class App extends Component {
         e.preventDefault();
         this.sendMessage(this.state.message);
         this.setState({
-          message: ''
-        })
-        console.log(this.state.message);
+            message: ""
+        });
+        // console.log(this.state.message);
     };
 
     render() {
@@ -72,6 +90,10 @@ class App extends Component {
                         handleChange={this.handleChange}
                         value={this.state.message}
                     />
+                    <RoomList
+                        subscribeToRoom={this.subscribeToRoom}
+                        rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
+                    />
                 </div>
             </AppWrapper>
         );
@@ -80,8 +102,8 @@ class App extends Component {
 
 const AppWrapper = styled.div`
     .container {
-        /* display: grid;
-        grid-auto-flow: column; */
+        display: grid;
+        grid-auto-flow: column;
     }
 `;
 

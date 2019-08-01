@@ -4,9 +4,9 @@ import Message from "./Message";
 const MessageList = ({ messages }) => {
     return (
         <div>
-            {messages.map(message => {
+            {messages.map((message,index) => {
                 return (
-                    <Message key={message.id} message={message.text} username={message.senderId}/>
+                    <Message key={index} message={message.text} username={message.senderId}/>
                 );
             })}
         </div>
