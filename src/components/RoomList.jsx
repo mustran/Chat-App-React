@@ -32,7 +32,10 @@ const ActiveLink = styled.li`
         text-decoration: none;
     }
     .active {
-        color: red;
-        background-color: blue;
+        color: rgba(0,0,0,0.4);
+        /* background-color: blue; */
+    }
+    a:hover{
+        color: rgba(0,0,0,0.8);
     }
 `;

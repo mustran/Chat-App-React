@@ -179,14 +179,15 @@ const AppWrapper = styled.div`
 
     .roomList {
         grid-area: pages;
-        background-color: #8ca0ff;
+        background-color: lightblue;
     }
 
     .messageList {
         overflow: scroll;
         height: 100%;
         grid-area: messages;
-        background-color: #ffa08c;
+        margin-left: 5px;
+        /* background-color: #ffa08c; */
         /* border-radius: 5px; */
     }
 
@@ -196,6 +197,7 @@ const AppWrapper = styled.div`
         position: relative;
     }
     .newRoom {
+        position: relative;
         grid-area: newRoom;
         background-color: #8cffa0;
     }

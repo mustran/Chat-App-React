@@ -10,7 +10,15 @@ class MessageList extends React.Component {
     }
     render() {
         if (this.props.disabled) {
-            return <div className="messageList"> JOIN A ROOM !</div>;
+            return (
+                <div
+                    style={{ display: "grid", placeItems: "center", fontSize: "50px" }}
+                    className="messageList"
+                >
+                    {" "}
+                    JOIN A ROOM &rarr;
+                </div>
+            );
         } else {
             return (
                 <div className="messageList">
